@@ -50,33 +50,35 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
 ### API & Backend Authentication
 
-- Server File Structure
+#### Server File Structure
 
-  - Have an API that has a couple endpoints
+- Have an API that has a couple endpoints
 
-    - One to register a user, Hash their password and put them in the database
-    - Second, send back a JSON web token to the front end
-    - We'll have a login route to send an email password validate against the DB
-      - If it validates send back JSON web token
+  - One to register a user, Hash their password and put them in the database
+  - Second, send back a JSON web token to the front end
+  - We'll have a login route to send an email password validate against the DB
+    - If it validates send back JSON web token
 
-  - npm init, have package.json in root folder
+- npm init, have package.json in root folder
 
-    - Change package.json start
-      - `"start": "node backend/server.js"`
+  - Change package.json start
+    - `"start": "node backend/server.js"`
 
-  - git init
+- git init
 
-    - create a `.gitignore` file
-    - add in `node_modules` and `.env `
+  - create a `.gitignore` file
+  - add in `node_modules` and `.env `
 
-  - Installations
-    - `npm i express dotenv mongoose colors bcryptjs`
-    - Install Dev dependencies
-      - ` npm i -D nodemon`
-      - Add in server script
-      ```
-        "scripts": {
-          "start": "node backend/server.js",
-          "server": "nodemon backend/server.js"
-        },
-      ```
+- Installations
+  - `npm i express dotenv mongoose colors bcryptjs`
+  - Install Dev dependencies
+    - ` npm i -D nodemon`
+    - Add in server script
+    ```
+      "scripts": {
+        "start": "node backend/server.js",
+        "server": "nodemon backend/server.js"
+      },
+    ```
+
+#### Express Server Setup
