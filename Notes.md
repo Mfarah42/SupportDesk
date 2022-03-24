@@ -32,6 +32,8 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
 ## Project Road Map Notes
 
+---
+
 - Run `npm init`
 
   - In **package.json** have entry point as **server.js**
@@ -50,7 +52,11 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
 ### API & Backend Authentication
 
-#### Server File Structure
+---
+
+#### Server File Structure Guide
+
+---
 
 - Have an API that has a couple endpoints
 
@@ -81,4 +87,68 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
       },
     ```
 
-#### Express Server Setup
+#### Express Server Setup Guide
+
+- Create a server.js file
+
+  - Require express, dotenv
+  - Keep PORT value inside **.env File**
+
+    - Call value from server.js from .env by
+      - `PORT = process.env.PORT`
+
+  - Create Routes, example
+    ```
+    app.get("/", (req, res) => {
+        res.send("Test");
+      //  res.json({message:"Test"})
+      //  res.status(200).json({message:"Test"})
+    });
+    ```
+
+### Add Routes & Controllers
+
+- Create a seperate folder for routes
+
+  - Inside routes create userRoutes
+
+    - This is where we'll keep routes for users (example)
+      ```
+        router.post("/", (req, res) => {
+          res.send("Register Route");
+        });
+      ```
+    - Outside in the server.js we can call it
+      ```
+      app.use("/api/users", require("./routes/userRoutes"));
+      ```
+
+  - Don't create logic inside the router, create logic outside
+
+- Create a seperate folder for "Controllers" which are the logic inside router
+
+  - Create a `userController.js`
+
+    - inside userController, we'll have our logic
+
+      ```
+      const registerUser = (req, res) => {
+        res.send("Register Route");
+      };
+      ```
+
+    - In our userRoutes change
+
+      ```
+      router.post("/", (req, res) => {
+        res.send("Register Route");
+      });
+      ```
+
+      **to**
+
+      ```
+      router.post("/", registerUser);
+      ```
+
+      - Cleans up userRoutes file
