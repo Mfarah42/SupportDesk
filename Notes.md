@@ -89,6 +89,8 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
 #### Express Server Setup Guide
 
+---
+
 - Create a server.js file
 
   - Require express, dotenv
@@ -108,9 +110,13 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
 ### Add Routes & Controllers
 
+---
+
 - Create a seperate folder for routes
 
   - Inside routes create userRoutes
+
+    - `router.post` or `router.get` **_"router"_** is only for defining subpaths
 
     - This is where we'll keep routes for users (example)
       ```
@@ -152,3 +158,133 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
       ```
 
       - Cleans up userRoutes file
+
+### Error & Exception Handling
+
+---
+
+- Add comments to what each controller function is doing
+- Postman
+
+  - In postman go to body then urlform
+
+    - Here we can pass in the body data, and send data.(Post req)
+    - In our registerUser function, we can print out the body
+    - It will print undefined
+
+            const registerUser = (req, res) => {
+              console.log(req.body);
+              res.send("Register Route");
+            };
+            // prints undefined, we need a body parser middleware
+
+  - Body Parser middleware
+
+        app.use(express.json());
+        app.use(express.urlencoded({ extended: false }));
+
+    - Allows you to parse incoming request bodies in a middleware
+
+  <br></br>
+
+- Simple way to handle errors
+  const registerUser = (req, res) => {
+  const { name, email, password } = req.body;
+
+        // Validation
+        if (!name || !email || !password) {
+          // Clients error 400
+          res.status(400).json({ message: "Please include all fields" });
+        }
+
+        res.send("Register Route");
+      };
+
+  <br></br>
+
+- Better way to handle Errors
+  - Create a middleware folder
+  - create a file called errorMiddleware
+  - Create an errorHandler function
+  - Pass that function to a globbal middlware
+  - Install express async handler
+    - Handling exceptions inside of async express routes and passiing them
+      to your express error handlers
+    - We're using mongoose which returns a promise
+
+<br></br>
+
+### Connecting To The Database
+
+---
+
+- Create a folder called `config`
+- Create a file called `db`
+  - In the file db create a function called `connectDB`
+    - Create a try-catch
+    - mongoose returns a promise
+    ```
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    ```
+    - export `connectDB`
+- In .env file, create `MONGO_URI` variable and pass in cluster
+  connection string
+
+- Import `connectDB` to server.js
+
+  - Run the function
+
+    ```
+      // Connect to database
+      connectDB();
+    ```
+
+<br></br>
+
+### Register User
+
+---
+
+- Create a folder called **_models_**
+- Create `userModel.js`
+
+  - Create a userSchema
+
+  ```
+      const userSchema = mongoose.Schema({
+          name: {
+              type: String,
+              required: [true, 'Please, add a name']
+          }
+      })
+  ```
+
+  - Takes in an **_Object of fields_**
+
+  - export the schema
+
+  ```
+    module.exports = mongoose.model("User", userSchema);
+  ```
+
+- In `userController.js` import **_User_**
+
+  ```
+    const User = require("../models/userModel");
+  ```
+
+  - Import bcryptjs
+  - In `registerUser` check if user exists by email
+  - If they do, return 400 error and throw new error
+
+  - Hash Password
+  - Create user
+
+  ```
+      const user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+    });
+
+  ```
