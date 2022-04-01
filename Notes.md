@@ -485,3 +485,77 @@ server.js => **_routes Folder_** => userRoutes
 
 - Inside frontend
   - install `npm i react-router-dom react-toastify axios react-icons react-modal `
+
+### Headers & Initial Pages
+
+---
+
+- Create pages folder and component folder
+  - Inside pages folder
+    - Create Home, Login, Registration
+  - Inside component folder
+    - Create Header component
+- Inside App.js file
+
+  - Create Routes and Paths
+
+    ```
+    <Router>
+      <div className="container">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
+
+    ```
+
+  ### Home, Login & Register UI
+
+  ***
+
+  - Create state that grabs all of the form data
+  - Destructor state values
+  - ` const { name, email, password, password2 } = formData;`
+  - [Dynamically update object property](https://stackoverflow.com/questions/50376353/why-we-need-to-put-e-target-name-in-square-brackets)
+
+  - ```
+      const onChange = (e) => {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+        }));
+      };
+    ```
+    - `[e.target.name]: e.target.value,`
+
+### Redux Setup & Auth Slice
+
+---
+
+- Create Features folder
+
+  - Create auth folder
+
+    - Create authSlice
+
+      - create initialState object
+      - set them all to null or false or empty
+      - createSlice({}) ?
+
+    - Any reducer we create, we bring it in to store
+
+- **Expand on this more**
+
+### Hook Register Form To Redux
+
+- Inside authSlice
+  - Create a register and set that to createAsyncThunk
+    - createAsyncThunk is a function that handles async data.
+- Inside Register
+  - Hooks being brought in
+  - useSelector
+    - Allows you to extract data from Redux store state
