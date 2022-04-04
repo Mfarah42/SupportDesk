@@ -469,6 +469,8 @@ server.js => **_routes Folder_** => userRoutes
 
 ## **_Project FrontEnd Road Map Notes_**
 
+<br></br>
+
 ### Frontend Authentication
 
 ---
@@ -486,6 +488,8 @@ server.js => **_routes Folder_** => userRoutes
 - Inside frontend
   - install `npm i react-router-dom react-toastify axios react-icons react-modal `
 
+<br></br>
+
 ### Headers & Initial Pages
 
 ---
@@ -499,28 +503,42 @@ server.js => **_routes Folder_** => userRoutes
 
   - Create Routes and Paths
 
+        ```
+        <Router>
+          <div className="container">
+            <Header />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Routes>
+          </div>
+        </Router>
+
+        ```
+
+    <br></br>
+
+### Home, Login & Register UI
+
+---
+
+- Create state that grabs all of the form data
+
+  - ```
+         const [formData, setFormData] = useState({
+             name: "",
+             email: "",
+             password: "",
+             password2: "",
+         });
     ```
-    <Router>
-      <div className="container">
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </div>
-    </Router>
 
-    ```
+- Destructor state values
 
-  ### Home, Login & Register UI
-
-  ***
-
-  - Create state that grabs all of the form data
-  - Destructor state values
   - ` const { name, email, password, password2 } = formData;`
-  - [Dynamically update object property](https://stackoverflow.com/questions/50376353/why-we-need-to-put-e-target-name-in-square-brackets)
+
+- Create onChange function
 
   - ```
       const onChange = (e) => {
@@ -530,7 +548,18 @@ server.js => **_routes Folder_** => userRoutes
         }));
       };
     ```
+
+    - [Dynamically update object property](https://stackoverflow.com/questions/50376353/why-we-need-to-put-e-target-name-in-square-brackets)
+
     - `[e.target.name]: e.target.value,`
+
+- Work on Login page
+- Work on Home page
+  - Create two links for the home page
+    - Link to create a new ticket
+    - Link to view tickets
+
+<br></br>
 
 ### Redux Setup & Auth Slice
 
@@ -540,22 +569,215 @@ server.js => **_routes Folder_** => userRoutes
 
   - Create auth folder
 
-    - Create authSlice
+    - Create authSlice.js
 
       - create initialState object
-      - set them all to null or false or empty
-      - createSlice({}) ?
+        - ```
+            const initialState = {
+              user: null,
+              isError: false,
+              isSuccess: false,
+              isLoading: false,
+              message: "",
+            };
+          ```
+        - set them all to null or false or empty
+      - createSlice({})
+
+        - Accepts an object of reducer functions
+
+          - A slice name
+          - initial state value
+          - automatically generates a slice reducer
+            - with corresponding action creators and action types
+          - extraReducers
+            - Allows createSlice to respond to other action types besides
+              - the type is has generated
+
+        - ```
+            export const authSlice = createSlice({
+              name: "auth",
+              initialState,
+              reducers: {},
+              extraReducers: (builder) => {},
+            });
+          ```
+          - builder
+            - Allows us to add cases
 
     - Any reducer we create, we bring it in to store
+      - ```
+          export const store = configureStore({
+            reducer: {
+              auth: authReducer,
+            },
+          });
+        ```
 
 - **Expand on this more**
 
+<br></br>
+
 ### Hook Register Form To Redux
 
-- Inside authSlice
+- Inside authSlice.js
+
   - Create a register and set that to createAsyncThunk
-    - createAsyncThunk is a function that handles async data.
-- Inside Register
+
+    - createAsyncThunk is a function so that we can use async data.
+    - createAsyncThunk
+
+      - accepts an action type string
+      - A function that returns a promise
+        - And generates a thunk that dispatches
+          - pending/fulfilled/rejected action types based on that promise
+
+    - ```
+        export const register = createAsyncThunk(
+          'auth/register,
+          async (user, thunkAPI) =>{
+            console.log(user)
+          }
+        )
+      ```
+
+- Inside Register.js
+
   - Hooks being brought in
   - useSelector
+
     - Allows you to extract data from Redux store state
+    - Anything in the global state
+      - ```
+          const { user, isLoading, isSuccess, message } = useSelector(
+            (state) => state.auth
+          );
+        ```
+        - useSelector takes in a function that has state passed in
+
+  - useDispatch
+    - Hook that returns a reference to the dispatch function from Redux store
+
+"start": "set PORT=3005 && react-scripts start",
+
+<br> </br>
+
+### Register User
+
+- create a try-catch block inside register
+
+  - return authService.register(user) and pass in the user data
+  - if something goes wrong
+
+    - get the message from the backEnd and check a bunch of places
+    - return thunkApi.rejectWithValue(message)
+
+  - ```
+        async (user, thunkAPI) => {
+          try {
+            return await authService.register(user);
+          } catch (error) {
+            const message =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+
+            return thunkAPI.rejectWithValue(message);
+          }
+        }
+    ```
+
+- In the authService.js file
+
+  - import axios
+  - define AP_URL = '/api/users'
+  - make a post request to that url like we did in postman
+  - ```
+      const register = async(userData) =>{
+        response = await axios.post(API_URL, userData)
+
+        // if we get back data
+        if(response.data){
+          // save that data in localStorage
+          localStorage.setItem('user', JSON.stringify(response.data)
+
+        }
+        return response.data
+      }
+
+    ```
+
+  - Since we're using **_createAsyncThunk (see line 625)_**, it takes in
+
+    - accepts an **_action type_** string
+      - A function that returns a promise
+        - And generates a thunk that dispatches
+          - `pending/fulfilled/rejected action` types based on that promise
+
+  - Since we're using **_createAsyncThunk_** all that info "pending/fulfilled...."
+
+    - goes in `extraReducers`
+    - ```
+      extraReducers: (builder) =>{
+
+        builder
+          // case we wanna look at is register.pending
+          // pass in another argument that's a func that takes in state
+          .addCase(register.pending,(state)=>{
+            // what do we want when it's pending
+            state.isLoading = true;
+          })
+      }
+      ```
+
+  - Create a reset action inside authslice reducers
+
+    - reset the values
+    - ```
+          reducers: {
+            reset: (state) => {
+              state.isLoading = false;
+              state.isError = false;
+              state.message = "";
+            },
+          ...
+      ```
+
+  - Inside Register.js
+
+    - import useNavigate from react-router-dom
+      - initialize useNavigate `navigate = useNavigate()`
+    - import useEffect to reset data and check for errors
+    - if it's successful and user datas is there, then
+      - navigate('/') navigate to home
+      - dispatch the reset
+
+  - Test if everything works
+
+    - **_Submition Error_**
+      - When authservice submits post request
+        - It submits to `"http://localhost:3000/api/user"`
+        - We want it to submit it to the backend which is at 5000
+        - go to package.json on front end
+          - at the top have `"proxy": "http://localhost:5000"`
+        - This will submit data to the backend
+    - **_Refresh Error_**
+
+      - When we refresh the user data is gone aka(logged out)
+      - We want the user to stay logged in
+
+        - Inside the `authSlice.js`
+
+          - grab the user data from `localStorage`
+
+            - we saved the user data when we submitted the post request
+            - `localStorage.setItem("user", JSON.stringify(response.data));`
+
+          - To grab the data from `localStorage`
+            - `user = JSON.parse(localStorage.getItem('user')) `
+
+<br></br>
+
+### Logout User
