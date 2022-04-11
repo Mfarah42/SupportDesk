@@ -672,44 +672,42 @@ server.js => **_routes Folder_** => userRoutes
     - get the message from the backEnd and check a bunch of places
     - return thunkApi.rejectWithValue(message)
 
-  - ```
-        async (user, thunkAPI) => {
-          try {
-            return await authService.register(user);
-          } catch (error) {
-            const message =
-              (error.response &&
-                error.response.data &&
-                error.response.data.message) ||
-              error.message ||
-              error.toString();
+    - ```js
+      async (user, thunkAPI) => {
+        try {
+          return await authService.register(user);
+        } catch (error) {
+          const message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
 
-            return thunkAPI.rejectWithValue(message);
-          }
+          return thunkAPI.rejectWithValue(message);
         }
-    ```
+      };
+      ```
 
 - In the authService.js file
 
   - import axios
   - define AP_URL = '/api/users'
   - make a post request to that url like we did in postman
-  - ```
+  - ```js
       const register = async(userData) =>{
-        response = await axios.post(API_URL, userData)
+            response = await axios.post(API_URL, userData)
+            // if we get back data
+            if(response.data){
+              // save that data in localStorage
+              localStorage.setItem('user', JSON.stringify(response.data)
 
-        // if we get back data
-        if(response.data){
-          // save that data in localStorage
-          localStorage.setItem('user', JSON.stringify(response.data)
-
-        }
-        return response.data
-      }
-
+            }
+            return response.data
+          }
     ```
 
-  - Since we're using **_createAsyncThunk (see line 625)_**, it takes in
+  - Since we're using **_createAsyncThunk (see line 625)_** , it takes in
 
     - accepts an **_action type_** string
       - A function that returns a promise
@@ -719,23 +717,23 @@ server.js => **_routes Folder_** => userRoutes
   - Since we're using **_createAsyncThunk_** all that info "pending/fulfilled...."
 
     - goes in `extraReducers`
-    - ```
-      extraReducers: (builder) =>{
 
-        builder
-          // case we wanna look at is register.pending
-          // pass in another argument that's a func that takes in state
-          .addCase(register.pending,(state)=>{
-            // what do we want when it's pending
-            state.isLoading = true;
-          })
-      }
-      ```
+    ```js
+    extraReducers: (builder) => {
+      builder
+        // case we wanna look at is register.pending
+        // pass in another argument that's a func that takes in state
+        .addCase(register.pending, (state) => {
+          // what do we want when it's pending
+          state.isLoading = true;
+        });
+    };
+    ```
 
   - Create a reset action inside authslice reducers
 
     - reset the values
-    - ```
+    - ```js
           reducers: {
             reset: (state) => {
               state.isLoading = false;
@@ -781,3 +779,13 @@ server.js => **_routes Folder_** => userRoutes
 <br></br>
 
 ### Logout User
+
+### Login User
+
+## **_Ticket Functionality_**
+
+<br></br>
+
+### Ticket Model & Routes
+
+---

@@ -69,7 +69,7 @@ const loginUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(401);
-    throw new error("Invalid email or password");
+    throw new error("Invalid credentials");
   }
 
   res.send("Login Route");

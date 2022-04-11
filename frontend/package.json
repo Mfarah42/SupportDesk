@@ -19,7 +19,7 @@
     "react-toastify": "^8.2.0"
   },
   "scripts": {
-    "start": "set PORT=3005 && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
