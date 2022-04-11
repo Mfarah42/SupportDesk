@@ -48,7 +48,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
   - In **package.json** have entry point as **server.js**
 
-    ```
+    ```json
     entry point: (index.js) server.js
     {
     "name": "support-desk",
@@ -88,7 +88,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
   - Install Dev dependencies
     - ` npm i -D nodemon`
     - Add in server script
-    ```
+    ```json
       "scripts": {
         "start": "node backend/server.js",
         "server": "nodemon backend/server.js"
@@ -108,9 +108,9 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
       - `PORT = process.env.PORT`
 
   - Create Routes, example
-    ```
+    ```js
     app.get("/", (req, res) => {
-        res.send("Test");
+      res.send("Test");
       //  res.json({message:"Test"})
       //  res.status(200).json({message:"Test"})
     });
@@ -127,13 +127,13 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
     - `router.post` or `router.get` **_"router"_** is only for defining subpaths
 
     - This is where we'll keep routes for users (example)
-      ```
-        router.post("/", (req, res) => {
-          res.send("Register Route");
-        });
+      ```js
+      router.post("/", (req, res) => {
+        res.send("Register Route");
+      });
       ```
     - Outside in the server.js we can call it
-      ```
+      ```js
       app.use("/api/users", require("./routes/userRoutes"));
       ```
 
@@ -145,7 +145,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
     - inside userController, we'll have our logic
 
-      ```
+      ```js
       const registerUser = (req, res) => {
         res.send("Register Route");
       };
@@ -153,7 +153,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
     - In our userRoutes change
 
-      ```
+      ```js
       router.post("/", (req, res) => {
         res.send("Register Route");
       });
@@ -161,7 +161,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
       **to**
 
-      ```
+      ```js
       router.post("/", registerUser);
       ```
 
@@ -179,12 +179,13 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
     - Here we can pass in the body data, and send data.(Post req)
     - In our registerUser function, we can print out the body
     - It will print undefined
-
-            const registerUser = (req, res) => {
-              console.log(req.body);
-              res.send("Register Route");
-            };
-            // prints undefined, we need a body parser middleware
+      ```js
+      const registerUser = (req, res) => {
+        console.log(req.body);
+        res.send("Register Route");
+      };
+      // prints undefined, we need a body parser middleware
+      ```
 
   - Body Parser middleware
 
@@ -199,14 +200,16 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
   const registerUser = (req, res) => {
   const { name, email, password } = req.body;
 
-        // Validation
-        if (!name || !email || !password) {
-          // Clients error 400
-          res.status(400).json({ message: "Please include all fields" });
-        }
+  ```js
+      // Validation
+      if (!name || !email || !password) {
+        // Clients error 400
+        res.status(400).json({ message: "Please include all fields" });
+      }
 
-        res.send("Register Route");
-      };
+      res.send("Register Route");
+    };
+  ```
 
   <br></br>
 
@@ -231,7 +234,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
   - In the file db create a function called `connectDB`
     - Create a try-catch
     - mongoose returns a promise
-    ```
+    ```js
     const conn = await mongoose.connect(process.env.MONGO_URI);
     ```
     - export `connectDB`
@@ -242,9 +245,9 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
   - Run the function
 
-    ```
-      // Connect to database
-      connectDB();
+    ```js
+    // Connect to database
+    connectDB();
     ```
 
 <br></br>
@@ -258,27 +261,27 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
   - Create a userSchema
 
-  ```
-      const userSchema = mongoose.Schema({
-          name: {
-              type: String,
-              required: [true, 'Please, add a name']
-          }
-      })
+  ```js
+  const userSchema = mongoose.Schema({
+    name: {
+      type: String,
+      required: [true, "Please, add a name"],
+    },
+  });
   ```
 
   - Takes in an **_Object of fields_**
 
   - export the schema
 
-  ```
-    module.exports = mongoose.model("User", userSchema);
+  ```js
+  module.exports = mongoose.model("User", userSchema);
   ```
 
 - In `userController.js` import **_User_**
 
-  ```
-    const User = require("../models/userModel");
+  ```js
+  const User = require("../models/userModel");
   ```
 
   - Import bcryptjs
@@ -288,13 +291,12 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
   - Hash Password
   - Create user
 
-  ```
-      const user = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-      });
-
+  ```js
+  const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+  });
   ```
 
   - [**_Mongoose Queries_**](https://mongoosejs.com/docs/queries.html)
@@ -330,22 +332,22 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 - Work on **_loginUser_** in `userController`
 
   - Check if user is in the db
-    ```
-      const user = await findOne({email})
+    ```js
+    const user = await findOne({ email });
     ```
   - Check if user login information is correct
-    ```
-        // If the user is found and password matches
-          if (user && await bcrypt.compare(password,user.password)){
-            res.status(200).json({
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-            });
-          }else{
-            res.status(401)
-            throw new error("Invalid email or password")
-          }
+    ```js
+    // If the user is found and password matches
+    if (user && (await bcrypt.compare(password, user.password))) {
+      res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      });
+    } else {
+      res.status(401);
+      throw new error("Invalid email or password");
+    }
     ```
 
 - JSON Web Token
@@ -365,7 +367,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
         - Consists of two parts
           - type of token, which is JWT
           - signing algorithm being used, exp HMAC
-            ```
+            ```js
               {
                 "alg": "HS256",
                 "typ": "JWT"
@@ -390,7 +392,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
 
           Example of a payload
 
-          ```
+          ```js
               {
                 "sub": "1234567890",
                 "name": "John Doe",
@@ -414,7 +416,7 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
       eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNDQ3MzY4MTU5MjgxZWRlNWNmYTE5MiIsImlhdCI6MTY0ODY1MzE2MCwiZXhwIjoxNjUxMjQ1MTYwfQ.-FmpLtL_a22jx3LlfVvmqVU1EiUaXoj8KucX7ohzU-s
       ```
 
-      ```
+      ```json
       Header: {
                 "alg": "HS256",
                 "typ": "JWT"
@@ -442,14 +444,14 @@ Img: https://www.bocasay.com/how-does-the-mern-stack-work/
   - import User schema model
 
   - Create protect function
-    ```
+    ```js
       const protect = asyncHandler(async(req,res, next)=>){}
     ```
     - Check if req.header.authorization exists
     - Grab the token
     - Verify token
-      ```
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      ```js
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       ```
 
 #### BackEnd file creation order
@@ -503,19 +505,18 @@ server.js => **_routes Folder_** => userRoutes
 
   - Create Routes and Paths
 
-        ```
-        <Router>
-          <div className="container">
-            <Header />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Routes>
-          </div>
-        </Router>
-
-        ```
+    ```js
+    <Router>
+      <div className="container">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
+    ```
 
     <br></br>
 
@@ -525,13 +526,13 @@ server.js => **_routes Folder_** => userRoutes
 
 - Create state that grabs all of the form data
 
-  - ```
-         const [formData, setFormData] = useState({
-             name: "",
-             email: "",
-             password: "",
-             password2: "",
-         });
+  - ```js
+    const [formData, setFormData] = useState({
+      name: "",
+      email: "",
+      password: "",
+      password2: "",
+    });
     ```
 
 - Destructor state values
@@ -540,13 +541,13 @@ server.js => **_routes Folder_** => userRoutes
 
 - Create onChange function
 
-  - ```
-      const onChange = (e) => {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-        }));
-      };
+  - ```js
+    const onChange = (e) => {
+      setFormData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
+    };
     ```
 
     - [Dynamically update object property](https://stackoverflow.com/questions/50376353/why-we-need-to-put-e-target-name-in-square-brackets)
@@ -572,14 +573,14 @@ server.js => **_routes Folder_** => userRoutes
     - Create authSlice.js
 
       - create initialState object
-        - ```
-            const initialState = {
-              user: null,
-              isError: false,
-              isSuccess: false,
-              isLoading: false,
-              message: "",
-            };
+        - ```js
+          const initialState = {
+            user: null,
+            isError: false,
+            isSuccess: false,
+            isLoading: false,
+            message: "",
+          };
           ```
         - set them all to null or false or empty
       - createSlice({})
@@ -594,24 +595,24 @@ server.js => **_routes Folder_** => userRoutes
             - Allows createSlice to respond to other action types besides
               - the type is has generated
 
-        - ```
-            export const authSlice = createSlice({
-              name: "auth",
-              initialState,
-              reducers: {},
-              extraReducers: (builder) => {},
-            });
+        - ```js
+          export const authSlice = createSlice({
+            name: "auth",
+            initialState,
+            reducers: {},
+            extraReducers: (builder) => {},
+          });
           ```
           - builder
             - Allows us to add cases
 
     - Any reducer we create, we bring it in to store
-      - ```
-          export const store = configureStore({
-            reducer: {
-              auth: authReducer,
-            },
-          });
+      - ```js
+        export const store = configureStore({
+          reducer: {
+            auth: authReducer,
+          },
+        });
         ```
 
 - **Expand on this more**
@@ -632,7 +633,7 @@ server.js => **_routes Folder_** => userRoutes
         - And generates a thunk that dispatches
           - pending/fulfilled/rejected action types based on that promise
 
-    - ```
+    - ```js
         export const register = createAsyncThunk(
           'auth/register,
           async (user, thunkAPI) =>{
@@ -648,10 +649,10 @@ server.js => **_routes Folder_** => userRoutes
 
     - Allows you to extract data from Redux store state
     - Anything in the global state
-      - ```
-          const { user, isLoading, isSuccess, message } = useSelector(
-            (state) => state.auth
-          );
+      - ```js
+        const { user, isLoading, isSuccess, message } = useSelector(
+          (state) => state.auth
+        );
         ```
         - useSelector takes in a function that has state passed in
 
