@@ -781,7 +781,42 @@ server.js => **_routes Folder_** => userRoutes
 
 ### Logout User
 
+- In authSlice, export logout function
+
+  - set function to createAsyncThunk
+    - createAsyncThunk takes in a Redux action type string
+  - call logout from authService
+  - add case to extraReducer
+    - set state.user to null
+
+- In authService
+
+  - create a logout function
+    - remove 'user' from localStorage
+    - We added user data to locaStorage when registering user
+
+- In Header component
+  - add in a ternary
+    - if user exists have a Logout button
+      - else have Login button
+  - Logout has an onClick function
+    - if clicked dispatch(logout()) and dispatch(reset()) is executed
+
 ### Login User
+
+- Start at the authSlice
+
+  - create login function set it to createAsynThunk
+  - create a try block
+    - try authService.log(user)
+    - catch error
+      - error from response, response data, response.data.message
+
+- In login
+  - create a post request
+  - if response data exists, add it to localStorage
+    - local storage takes in a string so stringify response.data
+  - return the response data
 
 ## **_Ticket Functionality_**
 
