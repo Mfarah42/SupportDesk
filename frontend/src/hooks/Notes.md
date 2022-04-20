@@ -825,3 +825,236 @@ server.js => **_routes Folder_** => userRoutes
 ### Ticket Model & Routes
 
 ---
+
+- Overview
+
+  - create ticketModel => ticketRoutes => ticketController
+
+- Create ticketModel
+  - create ticketSchema
+    - Each ticket must have a relationship between ticket and user
+    - user is the relationship
+    ```js
+      user: {
+        type: mongoose.Schema.Types.ObjectId, // relate to User ObjectId
+        required: true,
+        ref: "User", // This is where ObjectId is being ref from
+      },
+    ```
+- Create ticketRoutes
+
+### Get & Create Tickets(Backend)
+
+- getTickets
+  - We can get our user id from the JWT
+  - see line 18 in authMiddleware.js
+  - req.user.id prints
+    ```json
+    {
+      "_id": "625ec474de292e3bacb89f81",
+      "name": "bo",
+      "email": "bo@gmail.com",
+      "isAdmin": false,
+      "createdAt": "2022-04-19T14:17:24.033Z",
+      "updatedAt": "2022-04-19T14:17:24.033Z",
+      "__v": 0
+    }
+    ```
+- createTicket
+
+  - get body params
+    - `const { product, description } = req.body;`
+    - test if they exist, otherwise return an error
+  - get the user
+
+    - `const user = await User.findById(req.user.id);`
+    - test if the user exists, otherwise return an error
+
+  - create ticket
+    - we await and create ticket from ticket model
+    ```js
+    const ticket = await Ticket.create({
+      product,
+      description,
+      user: req.user.id,
+      status: "new",
+    });
+    ```
+  - set status to 201 because of create
+  - pass into our json the ticket
+
+- Postman Testing endpoints
+
+  - getTicket endpoint
+
+    - GET request
+      - http://localhost:6000/api/tickets
+
+  - createTicket endpoint
+    - Post request
+      - http://localhost:6000/api/tickets
+      - body
+        - product
+        - description
+
+### Single Ticket, Update & Delete (Backend)
+
+- GET single ticket; The endpoint in our ticketController
+
+  - http://localhost:6000/api/tickets/:id
+
+  - get the user
+    - `const user = await User.findById(req.user.id);`
+    - test if the user exists, otherwise return an error
+  - get the ticket
+    - req.params.id
+    - `const ticket = await Ticket.findById(req.params.id);`
+  - test whether ticket exists
+    - `if (ticket.user.toString() != req.user.id)`
+    - otherwise throw an error
+  - test if the ticket userId is the same as the req userId
+
+    - `if (ticket.user.toString() != req.user.id)`
+    - otherwise throw a "NOT Authorized" error
+
+  - After all these steps
+    - spit out the ticket
+    - `res.status(200).json(ticket);`
+
+- DELETE single ticket; The endpoint in our ticketController
+
+  - http://localhost:6000/api/tickets/:id
+
+  - get the user
+  - get the ticket
+  - test if the ticket belongs to the right user
+  - remove the ticket
+    - `await ticket.remove();`
+
+- PUT single ticket; The endpoint in our ticketController
+
+  - http://localhost:6000/api/tickets/:id
+
+  - get the user
+  - get the ticket
+  - test if the ticket belongs to the right user
+  - update ticket
+    - create a val updatedTicket
+    - await Ticket.findByIdAndUpdate
+    - pass in the id (for the right ticket)
+    - pass in the body
+    - pass in an object True
+      - if the ticket isn't there already, create it
+    - ```js
+      const updatedTicket = await Ticket.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      ```
+
+### Route Guard
+
+- In pages folder
+  - create `NewTicket.jsx`
+  - from Home, click on Create New Ticket
+    - that will take you to `http://localhost:3005/new-ticket`
+  - /new-ticket is the route for `NewTicket.jsx`
+- In App.js
+
+  - bring in NewTicket and rout it's path
+    - ` <Route path="/new-ticket" element={<NewTicket />} />`
+
+- Create Hooks folder
+
+  - create `useAuthStatus.js`
+  - import useSelector
+
+    - we need to select the user from our state
+    - to see if we're logged in or not
+
+  - create two states
+    - loggedIn
+      - whether we're logged in or not
+    - checkingStatus
+      - set to false when we check
+      - on the user, whether it's logged in or not
+  - get user state from redux
+
+    - `const {user} = useSelector((state) => state.auth)`
+
+  - useEffect to check if user is logged in ^
+    - update checkingStatus
+    - have useEffect go off every time you `user` is updated
+
+- Create PrivateRoute.jsx
+
+  - bring in loggedIn and checkingStatus states
+    - `const { loggedIn, checkingStatus } = useAuthStatus();`
+  - we checkStatus is true or not
+    - display spinner
+  - we check if logged in or not
+    - `<Outlet/>` import it from react-router-dom
+    - or `<Navigate to "/login">`
+
+- In App.js
+  - create a nested Route for private routes
+    - ```js
+      <Route path="/new-ticket" element={<PrivateRoute />}>
+        // Nested route is whats protected, and must be logged in
+        <Route path="/new-ticket" element={<NewTicket />} />
+      </Route>
+      ```
+
+### New Ticket Form
+
+- In NewTicket jsx
+  - bring in user state from redux
+  - create name, email state from user
+  - create product state and description state
+- Form
+  - Create two sections
+    - heading section
+    - The "form" section
+      - Non editable section
+        - wrap each label and input around a form-group
+          - Customer Name
+          - Customer Email
+      - Editable form section
+        - Have a form here
+          - wrap each label and input around a form-group
+            - Product
+            - Description of the issue
+          - Submit form button
+
+### Add Ticket To Redux
+
+- Create ticketSlice.js
+
+  - Every resource for redux always have
+
+    - `isError, isSuccess, isLoading, message`
+    - set up initialState
+      - ```js
+        const initialState = {
+          tickets: [],
+          ticket: {},
+          isError: false,
+          isSuccess: false,
+          isLoading: false,
+          message: "",
+        };
+        ```
+    - create and export our slice
+      - `export const ticketSlice = createSlice({....})`
+      - inside reducers create reset
+    - export reset by itself
+    - `export {reset} = ticketSlice.actions`
+    - export ticketSlice
+    - `export default ticketSlice.reducer`
+
+  - Inside _store.js_
+    - import ticketReducer from ticketSlice
+    - add ticket to reducer
+
+- Create ticketService.js
