@@ -1058,3 +1058,26 @@ server.js => **_routes Folder_** => userRoutes
     - add ticket to reducer
 
 - Create ticketService.js
+
+### Create Ticket Functionality
+
+- Create new ticket
+
+  - createAsyncThunk
+  - "tickets/createTickets"
+  - _How do we handle a protected route?_
+
+    - Need to get token
+    - thunkAPI, has a method to get the state
+      - `getState()` => `thunkAPI.getState().auth.user.token;`
+
+  - call ticketService and create createTicket method and pass in ticketData and token
+    - need to pass token
+    - access header and set authorization
+    ```js
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    ```
+
+### Fetch Ticket From Backend
