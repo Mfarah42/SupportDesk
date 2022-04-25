@@ -1061,9 +1061,10 @@ server.js => **_routes Folder_** => userRoutes
 
 ### Create Ticket Functionality
 
-- Create new ticket
+- In ticketSlice.js
 
-  - createAsyncThunk
+  - export const createTicket
+  - set it equal to createAsyncThunk
   - "tickets/createTickets"
   - _How do we handle a protected route?_
 
@@ -1082,4 +1083,111 @@ server.js => **_routes Folder_** => userRoutes
 
 ### Fetch Ticket From Backend
 
+- In ticketSlice.js
+
+  - export const getTickets
+  - set it equal to createAsyncThunk
+    - "ticket/getAll"
+    - async(\_, thunkAPI)
+      - get the token from thunkAPI
+      - return and await ticketService.getTickets(token)
+        - make sure to pass token in as it's a protected route
+
+- In ticketService.js
+
+  - const getTickets = async (token)....
+    - create a config object
+      - add in headers and assign Authorization the token
+    - create response and pass in API_URL and config
+    - return response.data
+
+- In pages folder, create Tickets.jsx
+  - Here's where we display our Tickets
+    - get useSelector to get tickets from redux
+    - get dispatch to pass in the reset
+    - get dispatch to pass in getTickets function
+      - pass in nothing
+  - Map through the tickets and pass each ticket to TicketItem component
+
 ### Listing Tickets In UI
+
+- In components, create TicketItem.jsx
+  - Here's where we form each row
+    - display Date correctly
+    - create a "View" link to display more info of the ticket -`Link to={/ticket/${ticket._id}}`
+
+### Single Ticket Display & Close Ticket
+
+- In App.js
+
+  - Create protected nested Route
+    - path = "/ticket/:ticketId"
+
+- In pages create Ticket.jsx
+
+  - dispatch getTicket function and pass in ticketId
+  - create a `Close Ticket` button
+  - dispatch closeTicket function and pass in ticketId
+
+- In ticketSlice.js
+
+  - export getTicket function
+  - export closeTicket function
+
+- In ticketService.js
+  - create getTicket function
+  - create closeTicket function
+
+<br>
+<br>
+
+## Notes Functionality & Deploy
+
+---
+
+### Notes Backend
+
+- In models, create noteModel.js
+
+  - will have
+    - user, ticket, text, isStaff and staffID
+  - export notesSchema as Note
+
+- In routes folder, create noteRoutes.js
+
+  - `/api/tickets/:ticketId/notes`
+  - `const router = express.Router({ mergeParams: true });`
+
+- In ticketRoutes.js
+
+  - Re-route into note router
+  - ```js
+    const noteRouter = require("./noteRoutes");
+    router.use("/:ticketId/notes", noteRouter);
+    ```
+
+- In controller folder, create noteController.js
+
+  - create getNotes
+
+    - GET request `http://localhost:6000/api/tickets/:id/notes`
+    - we need the user and ticket
+    - we find the NOTE by using the ticketId
+    - `const notes = await Note.find({ ticket: req.params.ticketId });`
+      - we pass that as response => res.status(200).json(notes)
+
+  - create addNote (where we create our note)
+    - POST request `http://localhost:6000/api/tickets/:id/notes`
+    - we need user and ticket
+    - we create NOTE
+    - ```js
+      const note = await Note.create({
+        user: req.user.id,
+        ticket: req.params.ticketId,
+        text: req.body.text,
+        isStaff: false,
+      });
+      ```
+    ```
+
+    ```

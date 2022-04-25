@@ -28,9 +28,36 @@ const getTickets = async (token) => {
   return response.data;
 };
 
+// Get user ticket
+const getTicket = async (ticketId, token) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  console.log(API_URL + ticketId);
+  const response = await axios.get(API_URL + ticketId, config);
+  console.log(response.data);
+  return response.data;
+};
+// Close ticket
+const closeTicket = async (ticketId, token) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  console.log(API_URL + ticketId);
+  const response = await axios.put(
+    API_URL + ticketId,
+    { status: "close" },
+    config
+  );
+  console.log(response.data);
+  return response.data;
+};
+
 const ticketService = {
   createTicket,
   getTickets,
+  getTicket,
+  closeTicket,
 };
 
 export default ticketService;
