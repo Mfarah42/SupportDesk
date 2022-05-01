@@ -4,7 +4,8 @@ function Home() {
   return (
     <>
       <section className="heading">
-        <h1>What do you need help with</h1>
+        <h1>Welcome To Mo-Support Team</h1>
+        <h3>What Can We Help You With?</h3>
         <p>Please choose from an option below</p>
       </section>
 
