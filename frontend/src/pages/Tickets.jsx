@@ -7,7 +7,7 @@ import TicketItem from "../components/TicketItem";
 
 const Tickets = () => {
   // const { user } = useSelector((state) => state.auth);
-  const { tickets, isLoading, isError, isSuccess, messages } = useSelector(
+  const { tickets, isLoading, isSuccess } = useSelector(
     (state) => state.tickets
   );
   const dispatch = useDispatch();
@@ -23,10 +23,11 @@ const Tickets = () => {
 
   useEffect(() => {
     dispatch(getTickets());
-    if (isLoading) {
-      <Spinner />;
-    }
-  }, [dispatch, isLoading]);
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <>

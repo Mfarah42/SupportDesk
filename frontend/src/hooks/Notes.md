@@ -1161,12 +1161,12 @@ server.js => **_routes Folder_** => userRoutes
 - In ticketRoutes.js
 
   - Re-route into note router
-  - ```js
-    const noteRouter = require("./noteRoutes");
-    router.use("/:ticketId/notes", noteRouter);
-    ```
+    - ```js
+      const noteRouter = require("./noteRoutes");
+      router.use("/:ticketId/notes", noteRouter);
+      ```
 
-- In controller folder, create noteController.js
+- In controller folder, create getNotesController.js
 
   - create getNotes
 
@@ -1188,6 +1188,8 @@ server.js => **_routes Folder_** => userRoutes
         isStaff: false,
       });
       ```
-    ```
+  - (notesModel) -> server -> ticketRoutes -> (authMiddleware) -> noteRoutes -> getNotesController
 
-    ```
+### Fetch Notes Through Redux
+
+-
