@@ -134,7 +134,7 @@ function Ticket() {
             ></textarea>
           </div>
           <div className="form-group">
-            <button className="btn" type="submit">
+            <button className="btn btn-green-reverse" type="submit">
               Submit
             </button>
           </div>

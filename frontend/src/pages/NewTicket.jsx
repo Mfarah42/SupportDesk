@@ -73,10 +73,14 @@ function NewTicket() {
               value={product}
               onChange={(e) => setProduct(e.target.value)}
             >
-              <option value="iPhone">iPhone</option>
-              <option value="Macbook Pro">Macbook Pro</option>
-              <option value="iMac">iMac</option>
-              <option value="iPad">iPad</option>
+              <option value="iPhone 11">iPhone 11</option>
+              <option value="iPhone 11 Pro">iPhone 11 Pro</option>
+              <option value="iPhone 12">iPhone 12</option>
+              <option value="iPhone 12 Pro">iPhone 12 Pro</option>
+              <option value="iPhone SE">iPhone SE</option>
+              <option value="iPhone 13">iPhone 13</option>
+              <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <div className="form-group">
@@ -91,7 +95,7 @@ function NewTicket() {
             ></textarea>
           </div>
           <div className="form-group">
-            <button className="btn btn-block">Submit</button>
+            <button className="btn btn-block btn-green-reverse">Submit</button>
           </div>
         </form>
       </section>

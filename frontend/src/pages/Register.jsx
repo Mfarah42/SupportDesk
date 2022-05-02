@@ -119,7 +119,7 @@ function Register() {
             />
           </div>
           <div className="form-group">
-            <button className="btn btn-block">Submit</button>
+            <button className="btn btn-block btn-green-reverse">Submit</button>
           </div>
         </form>
       </section>

@@ -160,6 +160,22 @@ h3 {
   background: #fff;
   color: #000;
 }
+.btn-gray {
+  background: rgb(105, 105, 105);
+  color: #fff;
+}
+.btn-red {
+  background: #fff;
+  color: red;
+}
+.btn-green {
+  background: #fff;
+  color: green;
+}
+.btn-green-reverse {
+  background: green;
+  color: #fff;
+}
 
 .btn-block {
   width: 100%;
